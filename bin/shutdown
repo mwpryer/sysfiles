@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Gracefully close windows and shutdown
+
+# Schedule shutdown to happen after closing windows
+nohup bash -c "sleep 2 && systemctl poweroff --no-wall" >/dev/null 2>&1 &
+
+close-windows
+
+# Allow apps to shutdown
+sleep 1

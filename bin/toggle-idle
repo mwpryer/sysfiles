@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Toggle hypridle on/off (useful when watching videos)
+
+if pgrep -x hypridle >/dev/null; then
+    pkill hypridle
+    notify-send "Idle Lock Disabled" "Screen will not auto-lock" -t 2000
+else
+    hypridle &
+    notify-send "Idle Lock Enabled" "Screen will auto-lock after timeout" -t 2000
+fi

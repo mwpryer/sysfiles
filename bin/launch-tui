@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Focus existing TUI window or launch new instance in terminal
+
+APP_TITLE="$1"
+
+# Check if window with this title exists
+ADDR=$(hyprctl clients -j | jq -r ".[]|select(.title==\"$APP_TITLE\")|.address" | head -1)
+
+if [[ -n "$ADDR" ]]; then
+    # Window found, focus it
+    hyprctl dispatch focuswindow "address:$ADDR"
+else
+    # Window not found, launch new instance in terminal
+    exec ghostty --title="$APP_TITLE" -e "$@"
+fi

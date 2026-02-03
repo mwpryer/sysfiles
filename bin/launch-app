@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Focus existing app window or launch new instance
+
+APP_CLASS="$1"
+
+# Check if window with this class exists
+ADDR=$(hyprctl clients -j | jq -r ".[]|select(.class==\"$APP_CLASS\")|.address" | head -1)
+
+if [[ -n "$ADDR" ]]; then
+    # Window found, focus it
+    hyprctl dispatch focuswindow "address:$ADDR"
+else
+    # Window not found, launch new instance
+    exec "${@:2}"
+fi

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Toggle window gaps between 0 and default values
+
+CURRENT=$(hyprctl getoption general:gaps_in | grep "custom type:" | awk '{print $3}')
+
+if [[ "$CURRENT" == "0" ]]; then
+    hyprctl keyword general:gaps_in 4
+    hyprctl keyword general:gaps_out 8
+    notify-send "Gaps enabled" -t 2000
+else
+    hyprctl keyword general:gaps_in 0
+    hyprctl keyword general:gaps_out 0
+    notify-send "Gaps disabled" -t 2000
+fi

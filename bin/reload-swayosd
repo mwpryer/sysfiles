@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Reload swayosd with updated configuration
+
+pkill swayosd-server
+hyprctl reload
+swayosd-server &

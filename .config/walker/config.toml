@@ -1,0 +1,3 @@
+force_keyboard_focus = true
+selection_wrap = true
+theme = "catppuccin"
