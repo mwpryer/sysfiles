@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# Battery status with dynamic icons matching waybar format
+# Outputs Pango markup for hyprlock with conditional colors
+
+CAPACITY=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null)
+STATUS=$(cat /sys/class/power_supply/BAT0/status 2>/dev/null)
+
+# Catppuccin Mocha colors (matching waybar battery states)
+source "${HOME}/.config/themes/catppuccin.sh"
+COLOR_NORMAL="${CATPPUCCIN_GREEN}"
+COLOR_WARNING="${CATPPUCCIN_YELLOW}"
+COLOR_CRITICAL="${CATPPUCCIN_RED}"
+
+if [[ -z "${CAPACITY}" ]]; then
+    echo "<span foreground=\"${COLOR_NORMAL}\">󰂑 N/A</span>"
+    exit 0
+fi
+
+# Icons matching waybar config (10 levels, 0-9 index)
+DISCHARGE_ICONS=(󰁺 󰁻 󰁼 󰁽 󰁾 󰁿 󰂀 󰂁 󰂂 󰁹)
+CHARGING_ICONS=(󰢜 󰂆 󰂇 󰂈 󰢝 󰂉 󰢞 󰂊 󰂋 󰂅)
+
+# Calculate icon index (0-9 based on capacity)
+INDEX=$(((CAPACITY - 1) / 10))
+[[ "${INDEX}" -lt 0 ]] && INDEX=0
+[[ "${INDEX}" -gt 9 ]] && INDEX=9
+
+case "${STATUS}" in
+    Full)
+        ICON="󰂅"
+        ;;
+    Charging|"Not charging")
+        ICON="${CHARGING_ICONS[${INDEX}]}"
+        ;;
+    *)
+        ICON="${DISCHARGE_ICONS[${INDEX}]}"
+        ;;
+esac
+
+# Color based on capacity (matches waybar states)
+if [[ "${CAPACITY}" -le 10 ]]; then
+    COLOR="${COLOR_CRITICAL}"
+elif [[ "${CAPACITY}" -le 20 ]]; then
+    COLOR="${COLOR_WARNING}"
+else
+    COLOR="${COLOR_NORMAL}"
+fi
+
+echo "<span foreground=\"${COLOR}\">${ICON} ${CAPACITY}%</span>"

@@ -1,0 +1,182 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 26,
+  "reload_style_on_change": true,
+  "modules-left": [
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "tray",
+    "custom/separator",
+    "custom/mullvad",
+    "cpu",
+    "memory",
+    "backlight",
+    "pulseaudio",
+    "bluetooth",
+    "network",
+    "battery"
+  ],
+  "hyprland/workspaces": {
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "active": "󱓻",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "4",
+      "5": "5",
+      "6": "6",
+      "7": "7",
+      "8": "8",
+      "9": "9",
+      "10": "0"
+    },
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    }
+  },
+  "clock": {
+    "format": "{:%A %b %d %H:%M %Z}",
+    "tooltip-format": "{:%Y-%m-%d %H:%M:%S %z}",
+    "timezones": [
+      "",
+      "Europe/London"
+    ],
+    "actions": {
+      "on-click": "tz_up"
+    }
+  },
+  "tray": {
+    "spacing": 16
+  },
+  "custom/separator": {
+    "format": "|",
+    "tooltip": false
+  },
+  "custom/mullvad": {
+    "exec": "mullvad-status",
+    "return-type": "json",
+    "interval": 5,
+    "format": "󰦝 {text}",
+    "on-click": "launch-app \"Mullvad VPN\" mullvad-vpn"
+  },
+  "cpu": {
+    "format": "{icon} {usage}%",
+    "format-icons": "󰍛",
+    "on-click": "launch-tui btop"
+  },
+  "memory": {
+    "format": "{icon} {percentage}%",
+    "format-icons": "󰘚",
+    "tooltip-format": "{used:.1f}GB / {total:.1f}GB",
+    "on-click": "launch-tui btop"
+  },
+  "backlight": {
+    "format": "{icon} {percent}%",
+    "format-icons": [
+      "󰃞",
+      "󰃟",
+      "󰃠"
+    ],
+    "on-click": "brightnessctl set 70%",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟 0%",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ],
+      "headphone": "󰋋"
+    },
+    "scroll-step": 5,
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+  },
+  "bluetooth": {
+    "format": "{icon} off",
+    "format-disabled": "{icon} disabled",
+    "format-off": "{icon} off",
+    "format-on": "{icon} on",
+    "format-connected": "{icon} {num_connections}",
+    "format-no-controller": "",
+    "format-icons": {
+      "disabled": "󰂲",
+      "off": "󰂲",
+      "on": "󰂯",
+      "connected": "󰂱"
+    },
+    "tooltip-format-connected": "{device_alias}",
+    "on-click": "launch-tui bluetui"
+  },
+  "network": {
+    "format-ethernet": "{icon} connected",
+    "format-wifi": "{icon} {signalStrength}%",
+    "format-disconnected": "{icon} offline",
+    "format-icons": {
+      "ethernet": "󰀂",
+      "wifi": [
+        "󰤯",
+        "󰤟",
+        "󰤢",
+        "󰤥",
+        "󰤨"
+      ],
+      "disconnected": "󰤮"
+    },
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "launch-tui impala"
+  },
+  "battery": {
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon} {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰂅 {capacity}%",
+    "format-icons": {
+      "default": [
+        "󰁺",
+        "󰁻",
+        "󰁼",
+        "󰁽",
+        "󰁾",
+        "󰁿",
+        "󰂀",
+        "󰂁",
+        "󰂂",
+        "󰁹"
+      ],
+      "charging": [
+        "󰢜",
+        "󰂆",
+        "󰂇",
+        "󰂈",
+        "󰢝",
+        "󰂉",
+        "󰢞",
+        "󰂊",
+        "󰂋",
+        "󰂅"
+      ]
+    },
+    "tooltip-format-discharging": "{power:.1f}W↓  {timeTo}",
+    "tooltip-format-charging": "{power:.1f}W↑  {timeTo}"
+  }
+}

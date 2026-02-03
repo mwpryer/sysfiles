@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Toggle blue light filter (nightlight) between warm and cool temperatures
+
+ON_TEMP=4000
+OFF_TEMP=6000
+
+if ! pgrep -x hyprsunset >/dev/null; then
+    setsid hyprsunset &
+    # Allow service to start
+    sleep 1
+fi
+
+CURRENT_TEMP=$(hyprctl hyprsunset temperature 2>/dev/null | grep -oE '[0-9]+')
+
+if [[ "$CURRENT_TEMP" == "$OFF_TEMP" ]] || [[ -z "$CURRENT_TEMP" ]]; then
+    hyprctl hyprsunset temperature $ON_TEMP
+    notify-send "Nightlight Enabled" "Temperature: ${ON_TEMP}K (warm)" -t 2000
+else
+    hyprctl hyprsunset temperature $OFF_TEMP
+    notify-send "Nightlight Disabled" "Temperature: ${OFF_TEMP}K (cool)" -t 2000
+fi

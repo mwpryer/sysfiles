@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Focus existing web app window or launch new instance
+
+URL="$1"
+
+# Extract domain from URL and generate Chrome app class
+DOMAIN=$(echo "${URL}" | sed -E 's|https?://||' | sed 's|/.*||')
+APP_CLASS="chrome-${DOMAIN}__-Default"
+
+# Check if window with this class exists
+ADDR=$(hyprctl clients -j | jq -r ".[]|select(.class==\"${APP_CLASS}\")|.address" | head -1)
+
+if [[ -n "$ADDR" ]]; then
+    # Window found, focus it
+    hyprctl dispatch focuswindow "address:$ADDR"
+else
+    # Window not found, launch as web app
+    exec google-chrome-stable --app="${URL}" "${@:2}"
+fi

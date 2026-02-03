@@ -1,0 +1,125 @@
+@import "../themes/catppuccin.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 14px;
+  color: @text;
+  background-color: @base;
+}
+
+tooltip {
+  background-color: @base;
+  border: 1px solid @surface0;
+  border-radius: 4px;
+}
+
+tooltip * {
+  background-color: @base;
+  margin: 2px 4px;
+  padding: 0;
+}
+
+.modules-left {
+  margin-left: 2px;
+}
+
+.modules-right {
+  margin-right: 2px;
+}
+
+#workspaces button {
+  all: initial;
+  min-width: 12px;
+  margin: 0 2px;
+  padding: 0 4px;
+}
+
+#workspaces button.empty {
+  color: @overlay0;
+}
+
+#workspaces button.active {
+  color: @mauve;
+}
+
+#clock {
+  color: @text;
+}
+
+#tray,
+#custom-mullvad,
+#cpu,
+#memory,
+#backlight,
+#pulseaudio,
+#bluetooth,
+#network,
+#battery {
+  margin: 0 8px;
+}
+
+#custom-separator {
+  color: @surface1;
+  margin: 0 6px;
+}
+
+#custom-mullvad {
+  color: @teal;
+}
+
+#custom-mullvad.disconnected {
+  color: @overlay0;
+}
+
+#cpu {
+  color: @blue;
+}
+
+#memory {
+  color: @peach;
+}
+
+#backlight {
+  color: @yellow;
+}
+
+#pulseaudio {
+  color: @maroon;
+}
+
+#pulseaudio.muted {
+  color: @overlay0;
+}
+
+#bluetooth {
+  color: @lavender;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @overlay0;
+}
+
+#network {
+  color: @teal;
+}
+
+#network.disconnected {
+  color: @red;
+}
+
+#battery {
+  color: @green;
+}
+
+#battery.charging {
+  color: @green;
+}
+
+#battery.warning {
+  color: @yellow;
+}
+
+#battery.critical {
+  color: @red;
+}

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Reload waybar with updated configuration
+
+killall waybar
+hyprctl dispatch exec waybar

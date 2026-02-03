@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Cycle through available audio output sinks
+
+# Filter out sinks where all ports are "not available" (e.g. disconnected HDMI/DP)
+readarray -t sinks < <(
+    pactl --format=json list sinks | jq -r '
+        [.[] | select(
+            (.ports | length == 0) or
+            (.ports | any(.availability != "not available"))
+        )] | .[].name'
+)
+[[ ${#sinks[@]} -lt 2 ]] && exit 0
+
+current=$(pactl get-default-sink)
+
+# Find current index, default to last so next wraps to 0
+index=$((${#sinks[@]} - 1))
+for i in "${!sinks[@]}"; do
+    if [[ "${sinks[$i]}" == "${current}" ]]; then
+        index=${i}
+        break
+    fi
+done
+
+next_index=$(((index + 1) % ${#sinks[@]}))
+next_sink="${sinks[$next_index]}"
+
+pactl set-default-sink "${next_sink}"
+
+# Move all playing streams to new sink
+for input in $(pactl list short sink-inputs | awk '{print $1}'); do
+    pactl move-sink-input "${input}" "${next_sink}"
+done
+
+# Get human-readable name for notification
+description=$(pactl --format=json list sinks | jq -r --arg name "${next_sink}" '.[] | select(.name == $name) | .description')
+
+notify-send -t 2000 "Audio Output" "${description:-${next_sink}}"
