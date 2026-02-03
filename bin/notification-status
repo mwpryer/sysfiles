@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# waybar notification/dnd status
+
+if makoctl mode | grep -q 'do-not-disturb'; then
+  echo '{"text": "󰂛 off", "class": "silent", "tooltip": "Notifications silenced"}'
+else
+  echo '{"text": "󰂚 on", "class": "", "tooltip": "Notifications enabled"}'
+fi

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# gracefully close windows, logout
+
+# schedule logout after closing windows
+nohup bash -c "sleep 2 && hyprctl dispatch exit" >/dev/null 2>&1 &
+
+close-windows
+
+# let apps shut down
+sleep 1

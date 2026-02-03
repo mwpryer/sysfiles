@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# gracefully close windows, reboot
+
+# schedule reboot after closing windows
+nohup bash -c "sleep 2 && systemctl reboot --no-wall" >/dev/null 2>&1 &
+
+close-windows
+
+# let apps shut down
+sleep 1

@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# move current workspace to target monitor, leave empty one on source
+
+TARGET=$1
+CURRENT_MON=$(hyprctl activeworkspace -j | jq -r '.monitor')
+CURRENT_WS=$(hyprctl activeworkspace -j | jq '.id')
+
+hyprctl dispatch movecurrentworkspacetomonitor "$TARGET"
+hyprctl dispatch focusmonitor "$CURRENT_MON"
+hyprctl dispatch workspace empty
+hyprctl dispatch workspace "$CURRENT_WS"

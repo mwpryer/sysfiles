@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# reload Hyprland config, waybar
+
+hyprctl reload
+reload-waybar
+
+sleep 0.1
+notify-send "Desktop reloaded" "Hyprland config and waybar restarted" -t 2000

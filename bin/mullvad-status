@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# waybar mullvad vpn status
+
+STATUS=$(mullvad status 2>/dev/null)
+
+if echo "${STATUS}" | grep -qi "^Connected"; then
+  # extract country code from relay name
+  COUNTRY_CODE=$(echo "${STATUS}" | grep -oP 'Relay:\s+\K[a-z]{2}' | head -1 | tr '[:lower:]' '[:upper:]')
+
+  if [[ -n "${COUNTRY_CODE}" ]]; then
+    echo "{\"text\": \"${COUNTRY_CODE}\", \"tooltip\": \"Mullvad: Connected (${COUNTRY_CODE})\", \"class\": \"connected\"}"
+  else
+    echo '{"text": "on", "tooltip": "Mullvad: Connected", "class": "connected"}'
+  fi
+else
+  echo '{"text": "off", "tooltip": "Mullvad: Disconnected", "class": "disconnected"}'
+fi

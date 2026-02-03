@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# cycle workspaces on current monitor, wrapping 1-3
+
+id=$(hyprctl activeworkspace -j | jq '.id')
+rel=$((((id - 1) % 3) + 1))
+
+case "$1" in
+  next) target=$(((rel % 3) + 1)) ;;
+  prev) target=$(((rel + 1) % 3 + 1)) ;;
+  *) exit 1 ;;
+esac
+
+if [[ "$2" == "window" ]]; then
+  hyprctl dispatch split-movetoworkspace "$target"
+else
+  hyprctl dispatch split-workspace "$target"
+fi

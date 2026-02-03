@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# hyprlock wifi status with dynamic icons
+
+source "${HOME}/.config/themes/catppuccin.sh"
+COLOR_CONNECTED="${CATPPUCCIN_TEAL}"
+COLOR_DISCONNECTED="${CATPPUCCIN_RED}"
+
+INTERFACE=$(iw dev 2>/dev/null | awk '$1=="Interface"{print $2; exit}')
+
+if [[ -z "${INTERFACE}" ]]; then
+  echo "<span foreground=\"${COLOR_DISCONNECTED}\">󰤭 N/A</span>"
+  exit 0
+fi
+
+STATE=$(cat "/sys/class/net/${INTERFACE}/operstate" 2>/dev/null)
+
+if [[ "${STATE}" != "up" ]]; then
+  echo "<span foreground=\"${COLOR_DISCONNECTED}\">󰤭 offline</span>"
+  exit 0
+fi
+
+LINK_QUALITY=$(awk -v iface="${INTERFACE}" '$1==iface":"{gsub(/\./,"",$3); print $3}' /proc/net/wireless 2>/dev/null)
+
+if [[ -z "${LINK_QUALITY}" ]]; then
+  echo "<span foreground=\"${COLOR_CONNECTED}\">󰤯 ?</span>"
+  exit 0
+fi
+
+# /proc/net/wireless quality is 0-70, waybar converts to percentage same way
+QUALITY=$(( LINK_QUALITY * 100 / 70 ))
+[[ "${QUALITY}" -gt 100 ]] && QUALITY=100
+[[ "${QUALITY}" -lt 0 ]] && QUALITY=0
+
+# icons matching waybar config (5 levels)
+ICONS=(󰤯 󰤟 󰤢 󰤥 󰤨)
+INDEX=$(( QUALITY / 25 ))
+[[ "${INDEX}" -gt 4 ]] && INDEX=4
+
+echo "<span foreground=\"${COLOR_CONNECTED}\">${ICONS[${INDEX}]} ${QUALITY}%</span>"

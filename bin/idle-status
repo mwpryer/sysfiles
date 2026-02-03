@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# waybar hypridle status
+
+if pgrep -x hypridle >/dev/null; then
+  echo '{"text": "󰌾 on", "class": "", "tooltip": "Idle lock enabled"}'
+else
+  echo '{"text": "󰌿 off", "class": "disabled", "tooltip": "Idle lock disabled"}'
+fi

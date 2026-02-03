@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# toggle tailscale connection
+
+if tailscale status &>/dev/null; then
+  sudo tailscale down
+  notify-send "Tailscale Disconnected" "VPN is now off" -t 2000
+else
+  sudo tailscale up
+  notify-send "Tailscale Connected" "VPN is now on" -t 2000
+fi
+
+pkill -RTMIN+5 waybar

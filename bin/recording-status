@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# waybar screen recording status
+
+pid=$(pgrep -f "^gpu-screen-recorder")
+if [[ -n "$pid" ]] && readlink /proc/"$pid"/fd/* 2>/dev/null | grep -q '\.mp4$'; then
+  echo '{"text": "● REC", "class": "recording"}'
+else
+  echo '{"text": "", "class": ""}'
+fi

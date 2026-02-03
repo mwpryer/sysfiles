@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# toggle desktop by hiding/restoring all windows on active workspace
+
+STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/hypr-show-desktop"
+
+if [[ -f "${STATE_FILE}" ]]; then
+  while IFS=' ' read -r addr ws; do
+    hyprctl dispatch movetoworkspacesilent "${ws},address:${addr}"
+  done < "${STATE_FILE}"
+  rm "${STATE_FILE}"
+  notify-send "Desktop hidden" -t 2000
+else
+  ACTIVE_WS=$(hyprctl activeworkspace -j | jq -r '.id')
+  hyprctl clients -j | jq -r --argjson ws "${ACTIVE_WS}" \
+    '.[] | select(.workspace.id == $ws) | "\(.address) \(.workspace.id)"' >"${STATE_FILE}"
+
+  if [[ ! -s "${STATE_FILE}" ]]; then
+    rm "${STATE_FILE}"
+    exit 0
+  fi
+
+  while IFS=' ' read -r addr ws; do
+    hyprctl dispatch movetoworkspacesilent "special:desktop,address:${addr}"
+  done < "${STATE_FILE}"
+  notify-send "Desktop shown" -t 2000
+fi

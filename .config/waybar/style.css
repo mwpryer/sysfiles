@@ -1,0 +1,193 @@
+@import "../themes/catppuccin.css";
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 14px;
+  background-color: @base;
+}
+
+tooltip {
+  background-color: @base;
+  border: 1px solid @surface0;
+  border-radius: 4px;
+}
+
+tooltip * {
+  margin: 2px 4px;
+  padding: 0;
+}
+
+#custom-system-menu,
+#workspaces,
+#tray,
+#indicators,
+#status {
+  background-color: @surface0;
+  border-radius: 4px;
+  margin: 4px 3px;
+  padding: 0 4px;
+}
+
+#workspaces *,
+#tray *,
+#indicators *,
+#status * {
+  background-color: transparent;
+}
+
+#custom-system-menu {
+  padding: 0 10px 0 6px;
+}
+
+#workspaces {
+  background-color: transparent;
+  padding: 0;
+}
+
+#workspaces button {
+  all: initial;
+  min-width: 24px;
+  min-height: 24px;
+  padding: 0;
+  border-radius: 4px;
+  color: @text;
+}
+
+#workspaces button * {
+  color: inherit;
+  background-color: transparent;
+}
+
+#workspaces button.empty {
+  color: @overlay0;
+}
+
+#workspaces button.active {
+  background-color: @surface0;
+  color: @text;
+}
+
+#clock {
+  color: @text;
+}
+
+#tray {
+  padding: 0 10px;
+}
+
+#custom-recording,
+#custom-idle,
+#custom-notifications,
+#custom-nightlight,
+#cpu,
+#memory,
+#backlight,
+#pulseaudio,
+#bluetooth,
+#custom-tailscale,
+#custom-mullvad,
+#network,
+#battery {
+  margin: 0px 6px;
+}
+
+#custom-recording {
+  color: @overlay0;
+}
+
+#custom-recording.recording {
+  color: @red;
+}
+
+#custom-idle {
+  color: @green;
+}
+
+#custom-idle.disabled {
+  color: @overlay0;
+}
+
+#custom-notifications {
+  color: @lavender;
+}
+
+#custom-notifications.silent {
+  color: @overlay0;
+}
+
+#custom-nightlight {
+  color: @yellow;
+}
+
+#custom-nightlight.off {
+  color: @overlay0;
+}
+
+#cpu {
+  color: @blue;
+}
+
+#memory {
+  color: @peach;
+}
+
+#backlight {
+  color: @yellow;
+}
+
+#pulseaudio {
+  color: @maroon;
+}
+
+#pulseaudio.muted {
+  color: @overlay0;
+}
+
+#bluetooth {
+  color: @lavender;
+}
+
+#bluetooth.disabled,
+#bluetooth.off {
+  color: @overlay0;
+}
+
+#custom-tailscale {
+  color: @blue;
+}
+
+#custom-tailscale.disconnected {
+  color: @overlay0;
+}
+
+#custom-mullvad {
+  color: @teal;
+}
+
+#custom-mullvad.disconnected {
+  color: @overlay0;
+}
+
+#network {
+  color: @teal;
+}
+
+#network.disconnected {
+  color: @red;
+}
+
+#battery {
+  color: @green;
+}
+
+#battery.charging {
+  color: @green;
+}
+
+#battery.warning {
+  color: @yellow;
+}
+
+#battery.critical {
+  color: @red;
+}

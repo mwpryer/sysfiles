@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# waybar nightlight/hyprsunset status
+
+OFF_TEMP=6000
+
+CURRENT_TEMP=$(hyprctl hyprsunset temperature 2>/dev/null | grep -oE '[0-9]+')
+
+if [[ "$CURRENT_TEMP" == "$OFF_TEMP" ]] || [[ -z "$CURRENT_TEMP" ]]; then
+  echo '{"text": "󰌶 off", "class": "off", "tooltip": "Nightlight off"}'
+else
+  printf '{"text": "󰌵 on", "class": "", "tooltip": "Nightlight on (%sK)"}\n' "$CURRENT_TEMP"
+fi

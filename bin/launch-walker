@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# launch walker with dependencies
+
+# ensure elephant is running before launching walker
+if ! pgrep -x elephant >/dev/null; then
+  systemctl --user start elephant.service
+fi
+
+# ensure walker service is running
+if ! pgrep -f "walker --gapplication-service" >/dev/null; then
+  setsid walker --gapplication-service &
+  # let service start
+  sleep 0.1
+fi
+
+exec walker "$@"

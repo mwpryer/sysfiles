@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# swap all windows between two workspaces
+
+WS_A=${1:-1}
+WS_B=${2:-2}
+TEMP=99
+
+# get window addresses from each workspace
+WS_A_WINS=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS_A) | .address")
+WS_B_WINS=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $WS_B) | .address")
+
+# build batch command
+BATCH=""
+for ADDR in $WS_A_WINS; do
+  BATCH="${BATCH}dispatch movetoworkspacesilent $TEMP,address:$ADDR;"
+done
+for ADDR in $WS_B_WINS; do
+  BATCH="${BATCH}dispatch movetoworkspacesilent $WS_A,address:$ADDR;"
+done
+for ADDR in $WS_A_WINS; do
+  BATCH="${BATCH}dispatch movetoworkspacesilent $WS_B,address:$ADDR;"
+done
+
+# switch to where original windows moved
+hyprctl --batch "${BATCH}dispatch workspace $WS_B"

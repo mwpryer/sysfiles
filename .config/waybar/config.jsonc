@@ -1,0 +1,221 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 32,
+  "reload_style_on_change": true,
+  "modules-left": [
+    "custom/system-menu",
+    "hyprland/workspaces"
+  ],
+  "modules-center": [
+    "clock"
+  ],
+  "modules-right": [
+    "tray",
+    "group/indicators",
+    "group/status"
+  ],
+  "custom/system-menu": {
+    "format": "󰣇",
+    "on-click": "system-menu",
+    "tooltip": false
+  },
+  "hyprland/workspaces": {
+    "all-outputs": false,
+    "format": "{icon}",
+    "format-icons": {
+      "default": "",
+      "1": "1",
+      "2": "2",
+      "3": "3",
+      "4": "1",
+      "5": "2",
+      "6": "3",
+      "7": "1",
+      "8": "2",
+      "9": "3"
+    }
+  },
+  "group/indicators": {
+    "orientation": "inherit",
+    "modules": [
+      "custom/recording",
+      "custom/idle",
+      "custom/notifications",
+      "custom/nightlight"
+    ]
+  },
+  "clock": {
+    "format": "{:%A, %d %B %H:%M %Z}",
+    "tooltip-format": "{:%Y-%m-%d %H:%M:%S %z}",
+    "timezones": [
+      "Europe/London",
+      "Asia/Hong_Kong"
+    ],
+    "actions": {
+      "on-click": "tz_up"
+    }
+  },
+  "tray": {
+    "icon-size": 14,
+    "spacing": 12
+  },
+  "custom/recording": {
+    "exec": "recording-status",
+    "return-type": "json",
+    "signal": 1,
+    "format": "{}",
+    "tooltip": false,
+    "on-click": "record-screen"
+  },
+  "custom/idle": {
+    "exec": "idle-status",
+    "return-type": "json",
+    "signal": 2,
+    "format": "{}",
+    "on-click": "toggle-idle"
+  },
+  "custom/notifications": {
+    "exec": "notification-status",
+    "return-type": "json",
+    "signal": 3,
+    "format": "{}",
+    "on-click": "toggle-notifications"
+  },
+  "custom/nightlight": {
+    "exec": "nightlight-status",
+    "return-type": "json",
+    "signal": 4,
+    "format": "{}",
+    "on-click": "toggle-nightlight"
+  },
+  "custom/tailscale": {
+    "exec": "tailscale-status",
+    "return-type": "json",
+    "interval": 5,
+    "signal": 5,
+    "format": "󰌘 {text}",
+    "on-click": "toggle-tailscale"
+  },
+  "custom/mullvad": {
+    "exec": "mullvad-status",
+    "return-type": "json",
+    "interval": 5,
+    "format": "󰦝 {text}",
+    "on-click": "launch-app \"Mullvad VPN\" mullvad-vpn"
+  },
+  "group/status": {
+    "orientation": "inherit",
+    "modules": [
+      "cpu",
+      "memory",
+      "backlight",
+      "pulseaudio",
+      "bluetooth",
+      "custom/tailscale",
+      "custom/mullvad",
+      "network",
+      "battery"
+    ]
+  },
+  "cpu": {
+    "format": "{icon} {usage}%",
+    "format-icons": "󰍛",
+    "on-click": "launch-tui btop"
+  },
+  "memory": {
+    "format": "{icon} {percentage}%",
+    "format-icons": "󰘚",
+    "tooltip-format": "{used:.1f}GB / {total:.1f}GB",
+    "on-click": "launch-tui btop"
+  },
+  "backlight": {
+    "format": "{icon} {percent}%",
+    "format-icons": [
+      "󰃞",
+      "󰃟",
+      "󰃠"
+    ],
+    "on-click": "brightnessctl set 70%",
+    "on-scroll-up": "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+  "pulseaudio": {
+    "format": "{icon} {volume}%",
+    "format-muted": "󰝟 0%",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ],
+      "headphone": "󰋋"
+    },
+    "scroll-step": 5,
+    "on-click": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle",
+    "on-click-right": "cycle-audio"
+  },
+  "bluetooth": {
+    "format": "{icon} off",
+    "format-disabled": "{icon} disabled",
+    "format-off": "{icon} off",
+    "format-on": "{icon} on",
+    "format-connected": "{icon} {num_connections}",
+    "format-no-controller": "",
+    "format-icons": {
+      "disabled": "󰂲",
+      "off": "󰂲",
+      "on": "󰂯",
+      "connected": "󰂱"
+    },
+    "tooltip-format-connected": "{device_alias}",
+    "on-click": "launch-tui bluetui"
+  },
+  "network": {
+    "format-ethernet": "{icon} connected",
+    "format-wifi": "{icon} {signalStrength}%",
+    "format-disconnected": "{icon} offline",
+    "format-icons": {
+      "ethernet": "󰀂",
+      "wifi": [
+        "󰤯",
+        "󰤟",
+        "󰤢",
+        "󰤥",
+        "󰤨"
+      ],
+      "disconnected": "󰤮"
+    },
+    "tooltip-format-ethernet": "{ifname}: {ipaddr}\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-wifi": "{essid} ({frequency} GHz)\n⇣{bandwidthDownBytes}  ⇡{bandwidthUpBytes}",
+    "tooltip-format-disconnected": "Disconnected",
+    "on-click": "launch-tui impala"
+  },
+  "battery": {
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon} {capacity}%",
+    "format-plugged": "󰚥 {capacity}%",
+    "format-full": "󰂅 {capacity}%",
+    "format-icons": {
+      "default": [
+        "󰁺",
+        "󰁼",
+        "󰁾",
+        "󰂁",
+        "󰁹"
+      ],
+      "charging": [
+        "󰢜",
+        "󰂇",
+        "󰢝",
+        "󰂊",
+        "󰂅"
+      ]
+    },
+    "tooltip-format-discharging": "{power:.1f}W↓  {timeTo}",
+    "tooltip-format-charging": "{power:.1f}W↑  {timeTo}"
+  }
+}

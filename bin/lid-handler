@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# handle lid open/close, migrate windows off eDP-1 before disabling
+
+INTERNAL="eDP-1"
+
+close_lid() {
+  # first external monitor's active workspace
+  target_ws=$(hyprctl monitors -j | jq -r \
+    "[.[] | select(.name != \"${INTERNAL}\")][0].activeWorkspace.id")
+
+  if [[ -n "${target_ws}" && "${target_ws}" != "null" ]]; then
+    # move eDP-1 windows to target workspace
+    internal_id=$(hyprctl monitors -j | jq \
+      ".[] | select(.name == \"${INTERNAL}\").id")
+
+    hyprctl clients -j | jq -r \
+      ".[] | select(.monitor == ${internal_id}) | .address" |
+    while read -r addr; do
+      hyprctl dispatch movetoworkspacesilent "${target_ws},address:${addr}"
+    done
+  fi
+
+  hyprctl keyword monitor "${INTERNAL}, disable"
+}
+
+open_lid() {
+  hyprctl keyword monitor "${INTERNAL}, preferred, 0x0, 1"
+}
+
+case "${1:-auto}" in
+  close) close_lid ;;
+  open)  open_lid ;;
+  auto)  grep -q closed /proc/acpi/button/lid/LID/state 2>/dev/null && close_lid ;;
+esac

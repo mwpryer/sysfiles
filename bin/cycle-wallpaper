@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# cycle wallpapers in $XDG_PICTURES_DIR/wallpapers
+
+WALLPAPER_DIR="$(xdg-user-dir PICTURES)/wallpapers"
+STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/swaybg-current"
+
+set_wallpaper() {
+  pkill swaybg 2>/dev/null
+  setsid swaybg -i "$1" -m fill &>/dev/null &
+}
+
+# restore saved wallpaper without cycling
+if [[ "$1" == "--restore" ]]; then
+  saved=$(cat "${STATE_FILE}" 2>/dev/null)
+  if [[ -n "${saved}" && -f "${saved}" ]]; then
+    set_wallpaper "${saved}"
+    exit 0
+  fi
+fi
+
+readarray -t images < <(
+  find "${WALLPAPER_DIR}" -maxdepth 1 -type f \
+    -iregex '.*\.\(jpg\|jpeg\|png\|gif\|webp\|bmp\|tiff\|svg\)$' \
+    2>/dev/null | sort
+)
+[[ ${#images[@]} -eq 0 ]] && exit 0
+
+current=$(cat "${STATE_FILE}" 2>/dev/null)
+
+# find current index, default to last so next wraps to 0
+index=$((${#images[@]} - 1))
+for i in "${!images[@]}"; do
+  if [[ "${images[$i]}" == "${current}" ]]; then
+    index=$i
+    break
+  fi
+done
+
+next_index=$(((index + 1) % ${#images[@]}))
+next_image="${images[$next_index]}"
+
+mkdir -p "$(dirname "${STATE_FILE}")"
+echo "${next_image}" >"${STATE_FILE}"
+
+set_wallpaper "${next_image}"
+
+notify-send "Wallpaper" "${next_image##*/}" -t 2000

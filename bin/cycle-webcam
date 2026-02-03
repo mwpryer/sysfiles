@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# cycle available webcam devices
+
+STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/webcam-device"
+
+# capture-capable video devices (first per camera)
+readarray -t devices < <(
+  v4l2-ctl --list-devices 2>/dev/null | awk '
+    /^\S/ { name=$0 }
+    /\/dev\/video/ { if (!seen[name]++) print $1 }
+  '
+)
+
+[[ ${#devices[@]} -eq 0 ]] && { notify-send "Webcam" "No webcam devices found" -t 2000; exit 1; }
+[[ ${#devices[@]} -lt 2 ]] && { notify-send "Webcam" "Only one webcam available" -t 2000; exit 0; }
+
+current=$(cat "$STATE_FILE" 2>/dev/null || echo "${devices[0]}")
+
+# find current index, default to last so next wraps to 0
+index=$((${#devices[@]} - 1))
+for i in "${!devices[@]}"; do
+  if [[ "${devices[$i]}" == "$current" ]]; then
+    index=$i
+    break
+  fi
+done
+
+next_index=$(((index + 1) % ${#devices[@]}))
+next_device="${devices[$next_index]}"
+
+mkdir -p "$(dirname "$STATE_FILE")"
+echo "$next_device" >"$STATE_FILE"
+
+# human-readable name
+device_name=$(v4l2-ctl --list-devices 2>/dev/null | awk -v dev="$next_device" '
+  /^\S/ { name=$0; gsub(/[[:space:]]*\(.*/, "", name) }
+  $1 == dev { print name; exit }
+')
+
+# restart webcam overlay if running
+if pgrep -f "WebcamOverlay" >/dev/null; then
+  pkill -f "WebcamOverlay" 2>/dev/null
+  sleep 0.1
+
+  local_scale=$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .scale')
+  target_width=$(awk "BEGIN {printf \"%.0f\", 480 * $local_scale}")
+
+  preferred_resolutions=("640x360" "1280x720" "1920x1080")
+  video_size_arg=""
+  available_formats=$(v4l2-ctl --list-formats-ext -d "$next_device" 2>/dev/null)
+
+  for resolution in "${preferred_resolutions[@]}"; do
+    if echo "$available_formats" | grep -q "$resolution"; then
+      video_size_arg="-video_size $resolution"
+      break
+    fi
+  done
+
+  ffplay -f v4l2 $video_size_arg -framerate 30 "$next_device" \
+    -vf "scale=${target_width}:-1" \
+    -window_title "WebcamOverlay" \
+    -noborder \
+    -fflags nobuffer -flags low_delay \
+    -probesize 32 -analyzeduration 0 \
+    -loglevel quiet &
+fi
+
+notify-send "Webcam" "${device_name:-$next_device}" -t 2000

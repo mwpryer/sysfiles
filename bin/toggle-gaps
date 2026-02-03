@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# toggle window gaps between 0 and config defaults
+
+CONFIG="${HOME}/.config/hypr/modules/looknfeel.conf"
+
+# read defaults from config
+DEFAULT_GAPS_IN=$(grep 'gaps_in' "${CONFIG}" | awk '{print $3}')
+DEFAULT_GAPS_OUT=$(grep 'gaps_out' "${CONFIG}" | awk '{print $3}')
+DEFAULT_ROUNDING=$(grep 'rounding' "${CONFIG}" | head -1 | awk '{print $3}')
+
+CURRENT=$(hyprctl getoption general:gaps_in | grep "custom type:" | awk '{print $3}')
+
+if [[ "${CURRENT}" == "0" ]]; then
+  hyprctl keyword general:gaps_in "${DEFAULT_GAPS_IN}"
+  hyprctl keyword general:gaps_out "${DEFAULT_GAPS_OUT}"
+  hyprctl keyword decoration:rounding "${DEFAULT_ROUNDING}"
+  notify-send "Gaps enabled" -t 2000
+else
+  hyprctl keyword general:gaps_in 0
+  hyprctl keyword general:gaps_out 0
+  hyprctl keyword decoration:rounding 0
+  notify-send "Gaps disabled" -t 2000
+fi

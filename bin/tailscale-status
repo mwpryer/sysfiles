@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# waybar tailscale status
+
+if tailscale status &>/dev/null; then
+  echo '{"text": "on", "class": "connected"}'
+else
+  echo '{"text": "off", "class": "disconnected"}'
+fi

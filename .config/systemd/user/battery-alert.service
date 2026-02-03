@@ -1,0 +1,7 @@
+[Unit]
+Description=Battery level alert
+
+[Service]
+Type=oneshot
+ExecStart=%h/bin/battery-alert
+LogLevelMax=warning

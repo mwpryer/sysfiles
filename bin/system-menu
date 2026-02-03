@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+# system menu using walker in dmenu mode
+
+toggle_existing_menu() {
+  if pgrep -f "walker.*--dmenu" >/dev/null; then
+    walker --close >/dev/null 2>&1
+    exit 0
+  fi
+}
+
+menu() {
+  echo -e "$2" | launch-walker --dmenu --width 295 --minheight 1 --maxheight 630 -p "$1" 2>/dev/null
+}
+
+show_screenshot_menu() {
+  local options=""
+  options+="󰁛  Smart\n"
+  options+="󰹑  Fullscreen\n"
+  options+="󰘔  Window\n"
+  options+="󰈔  Copy Only"
+
+  case $(menu "Screenshot" "$options") in
+  *Smart*) take-screenshot smart ;;
+  *Fullscreen*) take-screenshot fullscreen ;;
+  *Window*) take-screenshot windows ;;
+  *Copy*) take-screenshot smart copy ;;
+  *) show_capture_menu ;;
+  esac
+}
+
+show_screenrecord_menu() {
+  local options=""
+  options+="󰸈  Screen only\n"
+  options+="󰕾  Desktop audio\n"
+  options+="󰍬  Desktop + mic\n"
+  options+="󰄀  All sources"
+
+  case $(menu "Screenrecord" "$options") in
+  *"Screen only"*) record-screen --no-audio ;;
+  *"Desktop audio"*) record-screen --with-desktop-audio ;;
+  *"Desktop + mic"*) record-screen --with-audio ;;
+  *"All sources"*) record-screen --with-audio --with-webcam ;;
+  *) show_capture_menu ;;
+  esac
+}
+
+show_capture_menu() {
+  local options=""
+  options+="Screenshot...\n"
+  options+="Screenrecord..."
+
+  case $(menu "Capture" "$options") in
+  *Screenshot*) show_screenshot_menu ;;
+  *Screenrecord*) show_screenrecord_menu ;;
+  *) show_main_menu ;;
+  esac
+}
+
+show_toggle_menu() {
+  local options=""
+  options+="󰌵  Nightlight\n"
+  options+="󰌾  Idle Lock\n"
+  options+="󱂬  Waybar\n"
+  options+="󱗼  Gaps\n"
+  options+="󰂚  Notifications"
+
+  case $(menu "Toggle" "$options") in
+  *Nightlight*) toggle-nightlight ;;
+  *"Idle Lock"*) toggle-idle ;;
+  *Waybar*) toggle-waybar ;;
+  *Gaps*) toggle-gaps ;;
+  *Notifications*) toggle-notifications ;;
+  *) show_main_menu ;;
+  esac
+}
+
+show_main_menu() {
+  local options=""
+  options+="Capture...\n"
+  options+="Toggle...\n"
+  options+="󰌾  Lock\n"
+  options+="󰒲  Suspend\n"
+  options+="󰍃  Logout\n"
+  options+="󰜉  Reboot\n"
+  options+="󰐥  Shutdown"
+
+  local choice=$(menu "Menu" "$options")
+  [[ -z "$choice" ]] && return
+
+  case "$choice" in
+  *Capture*) show_capture_menu ;;
+  *Toggle*) show_toggle_menu ;;
+  *Suspend*) systemctl suspend ;;
+  *Logout*) logout ;;
+  *Reboot*) reboot ;;
+  *Shutdown*) shutdown ;;
+  *Lock*) lock-screen ;;
+  esac
+}
+
+toggle_existing_menu
+show_main_menu

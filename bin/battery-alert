@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# battery monitor, alerts at low thresholds when discharging
+
+STATE_FILE="/run/user/${UID}/battery_alert_threshold"
+
+CAPACITY=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null)
+STATUS=$(cat /sys/class/power_supply/BAT0/status 2>/dev/null)
+
+[[ -z "${CAPACITY}" ]] && exit 0
+
+LAST_THRESHOLD=$(cat "${STATE_FILE}" 2>/dev/null || echo 0)
+
+if [[ "${STATUS}" != "Discharging" ]]; then
+  echo 0 >"${STATE_FILE}"
+  exit 0
+fi
+
+THRESHOLD=0
+URGENCY="normal"
+if [[ "${CAPACITY}" -le 5 ]]; then
+  THRESHOLD=5; URGENCY="critical"
+elif [[ "${CAPACITY}" -le 10 ]]; then
+  THRESHOLD=10; URGENCY="critical"
+elif [[ "${CAPACITY}" -le 20 ]]; then
+  THRESHOLD=20
+fi
+
+if [[ "${THRESHOLD}" -gt 0 && "${THRESHOLD}" -ne "${LAST_THRESHOLD}" ]]; then
+  notify-send --urgency="${URGENCY}" "Battery Low" "Battery at ${CAPACITY}%"
+  echo "${THRESHOLD}" >"${STATE_FILE}"
+fi
